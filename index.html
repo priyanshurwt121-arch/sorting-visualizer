@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sorting Visualizer Lab</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            color: white;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 15px;
+            background: #111827;
+            border-bottom: 1px solid #334155;
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #94a3b8;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 25px 15px;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        textarea,
+        select {
+            width: 100%;
+            padding: 13px;
+            border-radius: 10px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        button {
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        #sortBtn {
+            background: #22c55e;
+            color: #052e16;
+        }
+
+        #resetBtn {
+            background: #475569;
+            color: white;
+            margin-left: 10px;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .bars {
+            height: 330px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 6px;
+            padding: 20px 5px;
+            border-bottom: 2px solid #475569;
+            overflow-x: auto;
+        }
+
+        .bar {
+            min-width: 25px;
+            background: #38bdf8;
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            flex-direction: column;
+            transition: height 0.35s ease;
+        }
+
+        .bar span {
+            font-size: 11px;
+            margin-top: -20px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .explanation {
+            line-height: 1.7;
+            color: #cbd5e1;
+        }
+
+        .step {
+            padding: 12px;
+            border-left: 4px solid #22c55e;
+            background: #0f172a;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .complexity {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .complexity div {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .complexity strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #message {
+            margin-top: 10px;
+            color: #fbbf24;
+        }
+
+        @media (max-width: 700px) {
+            .controls,
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .complexity {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 25px;
+            }
+
+            .bars {
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>⚡ Sorting Visualizer Lab</h1>
+    <p>Algorithms ko sirf padho nahi — visualize bhi karo!</p>
+</header>
+
+<div class="container">
+
+    <!-- INPUT SECTION -->
+    <div class="card">
+
+        <label>🔢 Enter Numbers / Numbers daalo</label>
+
+        <textarea id="numbers">45, 12, 78, 23, 9, 34, 18</textarea>
+
+        <div class="controls">
+
+            <div>
+                <label>⚙️ Select Algorithm</label>
+
+                <select id="algorithm">
+
+                    <option value="bubble">
+                        Bubble Sort
+                    </option>
+
+                    <option value="quick">
+                        Quick Sort
+                    </option>
+
+                    <option value="merge">
+                        Merge Sort
+                    </option>
+
+                </select>
+            </div>
+
+            <div>
+                <label>🎯 Speed / Sorting Speed</label>
+
+                <select id="speed">
+
+                    <option value="1000">Slow - Easy to Understand</option>
+
+                    <option value="500" selected>
+                        Normal
+                    </option>
+
+                    <option value="200">
+                        Fast
+                    </option>
+
+                </select>
+            </div>
+
+        </div>
+
+        <button id="sortBtn">
+            ▶ Start Sorting
+        </button>
+
+        <button id="resetBtn">
+            🔄 Reset
+        </button>
+
+        <div id="message"></div>
+
+    </div>
+
+
+    <!-- VISUALIZATION -->
+    <div class="card">
+
+        <h2>📊 Visualization / Sorting Dekho</h2>
+
+        <div id="bars" class="bars"></div>
+
+    </div>
+
+
+    <!-- EXPLANATION -->
+    <div class="info-grid">
+
+        <div class="card">
+
+            <h2>🧠 What's Happening?</h2>
+
+            <p id="explanation" class="explanation">
+                Sorting start karo. Har step yahan Hinglish mein explain hoga.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>📚 Algorithm Information</h2>
+
+            <p id="algorithmInfo" class="explanation">
+                Bubble Sort mein adjacent elements ko compare kiya jata hai.
+            </p>
+
+            <div class="complexity">
+
+                <div>
+                    <strong>Best</strong>
+                    <span id="best">O(n)</span>
+                </div>
+
+                <div>
+                    <strong>Average</strong>
+                    <span id="average">O(n²)</span>
+                </div>
+
+                <div>
+                    <strong>Worst</strong>
+                    <span id="worst">O(n²)</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STEP LOG -->
+    <div class="card">
+
+        <h2>📝 Step-by-Step Details</h2>
+
+        <div id="steps">
+
+            <p class="explanation">
+                Abhi sorting start nahi hui hai.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const numbersInput = document.getElementById("numbers");
+    const algorithmInput = document.getElementById("algorithm");
+    const speedInput = document.getElementById("speed");
+
+    const barsContainer = document.getElementById("bars");
+
+    const explanation = document.getElementById("explanation");
+    const stepsContainer = document.getElementById("steps");
+
+    const message = document.getElementById("message");
+
+    const algorithmInfo = document.getElementById("algorithmInfo");
+
+    const best = document.getElementById("best");
+    const average = document.getElementById("average");
+    const worst = document.getElementById("worst");
+
+    let numbers = [];
+    let steps = [];
+    let currentStep = 0;
+    let timer;
+
+
+    function readNumbers() {
+
+        const input = numbersInput.value.trim();
+
+        if (input === "") {
+            throw new Error("Please numbers enter karo.");
+        }
+
+        const values = input
+            .split(/[,\s]+/)
+            .map(Number);
+
+        if (values.some(value => !Number.isFinite(value))) {
+            throw new Error("Sirf valid numbers enter karo.");
+        }
+
+        return values;
+    }
+
+
+    function drawBars(array) {
+
+        barsContainer.innerHTML = "";
+
+        if (array.length === 0) return;
+
+        const max = Math.max(...array.map(Math.abs), 1);
+
+        array.forEach((value) => {
+
+            const bar = document.createElement("div");
+
+            bar.className = "bar";
+
+            const height =
+                Math.max(25, (Math.abs(value) / max) * 250);
+
+            bar.style.height = height + "px";
+
+            const text = document.createElement("span");
+
+            text.innerText = value;
+
+            bar.appendChild(text);
+
+            barsContainer.appendChild(bar);
+
+        });
+
+    }
+
+
+    function addStep(text) {
+
+        steps.push({
+            array: [...numbers],
+            text: text
+        });
+
+    }
+
+
+    function bubbleSort(array) {
+
+        for (let i = 0; i < array.length - 1; i++) {
+
+            for (let j = 0; j < array.length - i - 1; j++) {
+
+                addStep(
+                    `Step ${steps.length + 1}: ${array[j]} aur ${array[j + 1]} ko compare kar rahe hain.`
+                );
+
+                if (array[j] > array[j + 1]) {
+
+                    [
+                        array[j],
+                        array[j + 1]
+                    ] =
+                    [
+                        array[j + 1],
+                        array[j]
+                    ];
+
+                    addStep(
+                        `Swap hua! ${array[j]} ko left side aur ${array[j + 1]} ko right side move kiya gaya.`
+                    );
+
+                }
+
+            }
+
+            addStep(
+                `Pass complete. Sabse bada remaining element right side apni correct position par aa gaya.`
+            );
+
+        }
+
+    }
+
+
+    function quickSort(array, low, high) {
+
+        if (low >= high) return;
+
+        const pivot = array[high];
+
+        addStep(
+            `Pivot select kiya gaya: ${pivot}. Ab smaller values left aur larger values right jayengi.`
+        );
+
+        let i = low;
+
+        for (let j = low; j < high; j++) {
+
+            addStep(
+                `${array[j]} ko pivot ${pivot} ke saath compare kiya ja raha hai.`
+            );
+
+            if (array[j] < pivot) {
+
+                [
+                    array[i],
+                    array[j]
+                ] =
+                [
+                    array[j],
+                    array[i]
+                ];
+
+                addStep(
+                    `${array[i]} pivot se chhota hai, isliye left partition mein move kiya gaya.`
+                );
+
+                i++;
+
+            }
+
+        }
+
+        [
+            array[i],
+            array[high]
+        ] =
+        [
+            array[high],
+            array[i]
+        ];
+
+        addStep(
+            `Pivot ${pivot} apni final correct position par place ho gaya.`
+        );
+
+        quickSort(array, low, i - 1);
+
+        quickSort(array, i + 1, high);
+
+    }
+
+
+    function mergeSort(array) {
+
+        function mergeSortRecursive(start, end) {
+
+            if (end - start <= 1) return;
+
+            const mid =
+                Math.floor((start + end) / 2);
+
+            addStep(
+                `Array ko do parts mein divide kiya: left part aur right part.`
+            );
+
+            mergeSortRecursive(start, mid);
+
+            mergeSortRecursive(mid, end);
+
+            const left =
+                array.slice(start, mid);
+
+            const right =
+                array.slice(mid, end);
+
+            let i = 0;
+            let j = 0;
+            let k = start;
+
+            while (
+                i < left.length &&
+                j < right.length
+            ) {
+
+                addStep(
+                    `${left[i]} aur ${right[j]} ko compare karke smaller value choose ki ja rahi hai.`
+                );
+
+                if (left[i] <= right[j]) {
+
+                    array[k++] = left[i++];
+
+                } else {
+
+                    array[k++] = right[j++];
+
+                }
+
+            }
+
+            while (i < left.length) {
+
+                array[k++] = left[i++];
+
+            }
+
+            while (j < right.length) {
+
+                array[k++] = right[j++];
+
+            }
+
+            addStep(
+                `Dono sorted parts merge hokar ek sorted section ban gaye.`
+            );
+
+        }
+
+        mergeSortRecursive(0, array.length);
+
+    }
+
+
+    function showStep() {
+
+        if (currentStep >= steps.length) {
+
+            clearInterval(timer);
+
+            explanation.innerHTML =
+                "<b>🎉 Sorting Complete!</b><br><br>" +
+                "Array successfully ascending order mein sort ho gaya.";
+
+            message.innerText =
+                "✅ Sorting successfully completed!";
+
+            return;
+        }
+
+        const step = steps[currentStep];
+
+        numbers = [...step.array];
+
+        drawBars(numbers);
+
+        explanation.innerText = step.text;
+
+        stepsContainer.innerHTML = "";
+
+        steps
+            .slice(0, currentStep + 1)
+            .forEach((item, index) => {
+
+                const div =
+                    document.createElement("div");
+
+                div.className = "step";
+
+                div.innerText =
+                    `${index + 1}. ${item.text}`;
+
+                stepsContainer.appendChild(div);
+
+            });
+
+        currentStep++;
+
+    }
+
+
+    function startSorting() {
+
+        clearInterval(timer);
+
+        try {
+
+            numbers = readNumbers();
+
+        } catch (error) {
+
+            message.innerText =
+                "❌ " + error.message;
+
+            return;
+
+        }
+
+        if (numbers.length > 50) {
+
+            message.innerText =
+                "⚠️ Visualization ke liye maximum 50 numbers rakho.";
+
+            return;
+
+        }
+
+        steps = [];
+
+        currentStep = 0;
+
+        stepsContainer.innerHTML = "";
+
+        message.innerText =
+            "⏳ Sorting in progress...";
+
+        const array = [...numbers];
+
+        const algorithm =
+            algorithmInput.value;
+
+
+        if (algorithm === "bubble") {
+
+            bubbleSort(array);
+
+        }
+
+        else if (algorithm === "quick") {
+
+            quickSort(
+                array,
+                0,
+                array.length - 1
+            );
+
+        }
+
+        else if (algorithm === "merge") {
+
+            mergeSort(array);
+
+        }
+
+        steps.push({
+            array: [...array],
+            text:
+                "🎉 Final Result: Array completely sorted hai."
+        });
+
+        timer =
+            setInterval(
+                showStep,
+                Number(speedInput.value)
+            );
+
+    }
+
+
+    algorithmInput.addEventListener(
+        "change",
+        function () {
+
+            const algorithm =
+                algorithmInput.value;
+
+            if (algorithm === "bubble") {
+
+                algorithmInfo.innerText =
+                    "Bubble Sort mein adjacent elements compare hote hain. Agar left element bada hai, dono swap hote hain.";
+
+                best.innerText = "O(n)";
+                average.innerText = "O(n²)";
+                worst.innerText = "O(n²)";
+
+            }
+
+            else if (algorithm === "quick") {
+
+                algorithmInfo.innerText =
+                    "Quick Sort mein ek pivot choose hota hai. Smaller values left aur larger values right side partition hote hain.";
+
+                best.innerText = "O(n log n)";
+                average.innerText = "O(n log n)";
+                worst.innerText = "O(n²)";
+
+            }
+
+            else {
+
+                algorithmInfo.innerText =
+                    "Merge Sort array ko repeatedly smaller parts mein divide karta hai aur phir sorted parts ko merge karta hai.";
+
+                best.innerText = "O(n log n)";
+                average.innerText = "O(n log n)";
+                worst.innerText = "O(n log n)";
+
+            }
+
+        }
+    );
+
+
+    document
+        .getElementById("sortBtn")
+        .addEventListener(
+            "click",
+            startSorting
+        );
+
+
+    document
+        .getElementById("resetBtn")
+        .addEventListener(
+            "click",
+            function () {
+
+                clearInterval(timer);
+
+                numbers = [];
+
+                steps = [];
+
+                currentStep = 0;
+
+                barsContainer.innerHTML = "";
+
+                explanation.innerText =
+                    "Sorting start karo. Har step yahan Hinglish mein explain hoga.";
+
+                stepsContainer.innerHTML =
+                    '<p class="explanation">Abhi sorting start nahi hui hai.</p>';
+
+                message.innerText = "";
+
+            }
+        );
+
+
+    drawBars(
+        [45, 12, 78, 23, 9, 34, 18]
+    );
+
+</script>
+
+</body>
+</html>
